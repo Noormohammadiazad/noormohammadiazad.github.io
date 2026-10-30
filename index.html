@@ -3,6 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <title>Mohammadali - Home Page</title>
+<style>
+.marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
+  width: 100%;
+}
+.marquee-content {
+  display: inline-block;
+  padding-left: 100%;
+  animation: marquee 10s linear infinite;
+}
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+</style>
 </head>
 <body bgcolor="#000033" text="#00FF00" link="#FFFF00" vlink="#FF00FF">
 
@@ -10,7 +27,9 @@
 
 <h1><font face="Tahoma" color="#00FFFF">~ صفحه‌ی من ~</font></h1>
 
-<marquee behavior="scroll" direction="left">:: WORK IN PROGRESS ::</marquee>
+<div class="marquee-container">
+  <div class="marquee-content">:: WORK IN PROGRESS ::</div>
+</div>
 
 <br>
 <table border="2" bordercolor="#FFFF00" cellpadding="6" bgcolor="#000000">
