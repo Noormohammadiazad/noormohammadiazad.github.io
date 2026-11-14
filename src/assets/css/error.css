@@ -1,0 +1,56 @@
+/* 404 only. Concatenated after base.css by the build. */
+
+/* --------------------------------------------------------------------------
+   1. 404: a classic error dialog
+   -------------------------------------------------------------------------- */
+
+.is-bare { padding-block-end: 0; }
+
+.is-bare main {
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  padding: var(--gutter);
+}
+
+.error-page { width: min(100%, 34rem); }
+
+.error-page[hidden] { display: none; }
+
+.dialog__body {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.dialog__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 3.25rem;
+  height: 3.25rem;
+  background: var(--warn);
+  color: #111111;
+  border: var(--b) solid var(--line);
+}
+
+.dialog__icon svg { width: 1.8rem; height: 1.8rem; }
+
+.error-code {
+  color: var(--head);
+  font: 900 var(--step-4)/1 var(--font-code);
+  text-shadow: calc(var(--sx) * 0.06em) 0.06em 0 var(--name-shadow);
+}
+
+html[lang="fa"] .error-code { font-family: var(--font-sans); }
+
+.dialog h1 {
+  margin-block: 0.6rem 0.5rem;
+  font-size: var(--step-2);
+}
+
+.dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 var(--pad) var(--pad);
+}

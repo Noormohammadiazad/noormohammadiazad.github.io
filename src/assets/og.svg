@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <!-- Authored on a square canvas: QuickLook (the macOS rasteriser used by
+       tools/make-images.sh) rescales non-square SVGs. The 1200x630 social
+       card is the band at translate(0 285), cropped out by the script. -->
+  <defs>
+    <radialGradient id="fog" cx="0.750" cy="0.476" r="0.42">
+      <stop offset="0.15" stop-color="#000022"/>
+      <stop offset="1" stop-color="#000022" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="scan" width="4" height="3" patternUnits="userSpaceOnUse">
+      <rect y="2" width="4" height="1" fill="#000000" fill-opacity="0.3"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="1200" fill="#000022"/>
+  <g transform="translate(0 285)">
+    <g fill="none" stroke="#00ff66" stroke-opacity="0.3" stroke-width="1.5">
+      <rect x="0.0" y="0.0" width="1200.0" height="630.0"/>
+      <rect x="327.3" y="109.1" width="763.6" height="400.9"/>
+      <rect x="480.0" y="160.0" width="560.0" height="294.0"/>
+      <rect x="568.4" y="189.5" width="442.1" height="232.1"/>
+      <rect x="626.1" y="208.7" width="365.2" height="191.7"/>
+      <rect x="666.7" y="222.2" width="311.1" height="163.3"/>
+      <rect x="696.8" y="232.3" width="271.0" height="142.3"/>
+      <rect x="720.0" y="240.0" width="240.0" height="126.0"/>
+      <rect x="738.5" y="246.2" width="215.4" height="113.1"/>
+      <rect x="753.5" y="251.2" width="195.3" height="102.6"/>
+      <path d="M0.0 630 L900 300 M0.0 0 L900 300"/>
+      <path d="M200.0 630 L900 300 M200.0 0 L900 300"/>
+      <path d="M400.0 630 L900 300 M400.0 0 L900 300"/>
+      <path d="M600.0 630 L900 300 M600.0 0 L900 300"/>
+      <path d="M800.0 630 L900 300 M800.0 0 L900 300"/>
+      <path d="M1000.0 630 L900 300 M1000.0 0 L900 300"/>
+      <path d="M1200.0 630 L900 300 M1200.0 0 L900 300"/>
+      <path d="M0 157.5 L900 300 M1200 157.5 L900 300"/>
+      <path d="M0 315.0 L900 300 M1200 315.0 L900 300"/>
+      <path d="M0 472.5 L900 300 M1200 472.5 L900 300"/>
+    </g>
+    <rect width="1200" height="630" fill="url(#fog)"/>
+    <rect width="1200" height="630" fill="url(#scan)"/>
+
+    <!-- wireframe cube -->
+    <g fill="none" stroke="#00ff66" stroke-width="4" stroke-linejoin="miter">
+      <rect x="880" y="215" width="170" height="170" fill="#00ffff" fill-opacity="0.07"/>
+      <rect x="945" y="150" width="170" height="170"/>
+      <path d="M880 215 L945 150 M1050 215 L1115 150 M1050 385 L1115 320 M880 385 L945 320"/>
+    </g>
+    <path transform="translate(913 248) scale(3.3)" d="M8 24V8h4l4 6 4-6h4v16h-4v-9.5l-4 5.5-4-5.5V24z" fill="#00ffff"/>
+
+    <!-- window -->
+    <rect x="72" y="72" width="700" height="480" fill="#008f8f"/>
+    <rect x="60" y="60" width="700" height="480" fill="#000033" stroke="#00ff66" stroke-width="4"/>
+    <rect x="62" y="62" width="696" height="44" fill="#000066"/>
+    <rect x="60" y="104" width="700" height="4" fill="#00ff66"/>
+    <text x="84" y="92" font-family="Menlo, 'SF Mono', Consolas, monospace" font-size="20" font-weight="700" letter-spacing="1" fill="#00ffff">C:\MAMMADALI\INDEX.HTM</text>
+    <g fill="none" stroke="#00ffff" stroke-width="2.5">
+      <rect x="660" y="72" width="24" height="22"/><rect x="690" y="72" width="24" height="22"/><rect x="720" y="72" width="24" height="22"/>
+      <path d="M666 88h12M696 78h12v10h-12zM726 76l12 14M738 76l-12 14"/>
+    </g>
+
+    <text x="100" y="170" font-family="Menlo, 'SF Mono', Consolas, monospace" font-size="26" font-weight="700" fill="#00ff66"><tspan fill="#8fd9b0">C:\&gt;</tspan> whoami</text>
+    <rect x="282" y="148" width="15" height="28" fill="#00ff66"/>
+
+    <text x="104" y="284" font-family="-apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="84" font-weight="900" letter-spacing="-3.5" fill="#ff00ff">MOHAMMADALI</text>
+    <text x="98" y="278" font-family="-apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="84" font-weight="900" letter-spacing="-3.5" fill="#00ffff">MOHAMMADALI</text>
+    <text x="100" y="345" font-family="'Geeza Pro', 'SF Arabic', Tahoma, sans-serif" font-size="44" font-weight="700" fill="#8fd9b0">محمدعلی</text>
+    <text x="100" y="412" font-family="-apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="27" fill="#dcffe9">Computer engineering student · Software developer</text>
+
+    <rect x="98" y="452" width="232" height="50" fill="#00ff66"/>
+    <text x="114" y="485" font-family="Menlo, 'SF Mono', Consolas, monospace" font-size="24" font-weight="700" fill="#000022">mammadali.ir</text>
+    <text x="352" y="485" font-family="Menlo, 'SF Mono', Consolas, monospace" font-size="22" font-weight="700" fill="#ffff00">EN ·</text>
+    <text x="414" y="486" font-family="'Geeza Pro', 'SF Arabic', Tahoma, sans-serif" font-size="25" font-weight="700" fill="#ffff00">فا</text>
+  </g>
+</svg>

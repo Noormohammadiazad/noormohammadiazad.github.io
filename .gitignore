@@ -1,0 +1,9 @@
+# Build output — produced by `npm run build`, published by CI.
+dist/
+
+# macOS
+.DS_Store
+
+# Node (there are no dependencies, but keep this honest)
+node_modules/
+npm-debug.log*

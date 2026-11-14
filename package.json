@@ -1,0 +1,22 @@
+{
+  "name": "mammadali-ir",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Personal site and portfolio of Mohammadali — a bilingual (English/Persian) static page with CSS-3D effects and no runtime dependencies.",
+  "homepage": "https://mammadali.ir",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Noormohammadiazad/noormohammadiazad.github.io.git"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "node tools/serve.mjs",
+    "verify": "node tools/verify.mjs",
+    "rotate:workflow": "node tools/rotate-workflow.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,592 @@
+/* Home page: hero (dive, cube, terminal), the directory listing, one case
+   file per project with its exploded architecture, principles, about and
+   contact. Concatenated after base.css by the build. */
+
+/* --------------------------------------------------------------------------
+   1. Hero
+   -------------------------------------------------------------------------- */
+
+.hero { padding-block-start: clamp(1.75rem, 5vw, 3.5rem); }
+
+/* The dive. With the full motion budget on a wide-enough screen, the hero
+   grows and its window pins while you scroll; app.js flies it toward you and
+   out of sight. app.js measures the window and sets --stage-h (its height)
+   and --stage-top (where it pins): below the header when it fits, and with
+   its bottom edge on the screen's bottom edge when it is taller than the
+   screen — so you read all of it before the dive starts. The fallbacks are
+   what the first paint uses before app.js has run. Narrow and very short
+   screens get a plain section. */
+@media (min-width: 56rem) and (min-height: 32rem) {
+  .fx3d .hero {
+    height: calc(var(--stage-h, 90vh) + 70vh);
+    height: calc(var(--stage-h, 90svh) + 70svh);
+  }
+  .fx3d .hero__stage { position: sticky; top: var(--stage-top, 5.5rem); }
+}
+
+.hero__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "prompt  cube"
+    "name    name"
+    "alt     alt"
+    "lead    lead"
+    "actions actions"
+    "specs   specs"
+    "term    term";
+  column-gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+}
+
+@media (min-width: 56rem) {
+  .hero__body {
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 21rem);
+    grid-template-areas:
+      "prompt  cube"
+      "name    name"
+      "alt     alt"
+      "lead    specs"
+      "actions specs"
+      "term    term";
+  }
+}
+
+.hero__prompt {
+  grid-area: prompt;
+  color: var(--term);
+  font: 600 var(--step--1)/1.5 var(--font-code);
+}
+
+.hero__ps { color: var(--ink-2); }
+
+.hero__name {
+  grid-area: name;
+  margin-block: clamp(0.75rem, 2vw, 1.25rem) 0.4rem;
+  /* Sized so MOHAMMADALI stays on one line down to a 320px phone. */
+  font-size: clamp(1.75rem, 9.2vw - 0.2rem, 6.6rem);
+  font-weight: 900;
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+  text-shadow: calc(var(--sx) * 0.06em) 0.06em 0 var(--name-shadow);
+  overflow-wrap: anywhere;
+}
+
+html[lang="fa"] .hero__name {
+  font-size: clamp(2.8rem, 1rem + 8vw, 7rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.hero__alt {
+  grid-area: alt;
+  color: var(--ink-2);
+  font-size: var(--step-2);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.hero__lead {
+  grid-area: lead;
+  max-width: 40rem;
+  margin-block: clamp(1rem, 3vw, 1.75rem) 1.75rem;
+  font-size: var(--step-1);
+}
+
+.hero__actions { grid-area: actions; }
+
+.specs { grid-area: specs; margin-block-start: 2rem; }
+
+@media (min-width: 56rem) {
+  .specs { margin-block-start: clamp(1rem, 3vw, 1.75rem); }
+}
+
+/* A real DOS prompt. Latin mono for commands, Vazirmatn for Persian replies
+   (per-glyph fallback), and each output line picks its own direction. */
+.term {
+  grid-area: term;
+  margin-block-start: 1.75rem;
+  background: var(--term-bg);
+  color: var(--term-ink);
+  border: var(--b) solid var(--line);
+  font: 600 var(--step--1)/1.55 var(--font-code), "Vazirmatn", var(--font-sans);
+}
+
+.term[hidden] { display: none; }
+
+.term:focus-within { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+.term__out {
+  max-height: 9.5em;
+  overflow-y: auto;
+  padding: 0.6rem 0.8rem 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.term__out:empty { display: none; }
+
+.term__line {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.6rem 0.8rem;
+  cursor: text;
+}
+
+.term__ps { opacity: 0.75; }
+
+.term__in {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  caret-color: currentColor;
+  outline: none;
+}
+
+.term__in::placeholder { color: inherit; opacity: 0.45; }
+
+/* Touch: 16px stops iOS zooming the page on focus, and the line is a
+   comfortable target. */
+@media (pointer: coarse) {
+  .term__line { min-height: 3rem; }
+  .term__in { font-size: max(16px, 1em); }
+}
+
+/* --------------------------------------------------------------------------
+   2. The wireframe cube
+   Six bordered faces in preserve-3d. It spins on the compositor; app.js
+   adds pointer and scroll tilt on the outer box.
+   -------------------------------------------------------------------------- */
+
+.cube-stage {
+  --cube: clamp(3.6rem, 1.6rem + 6vw, 8rem);
+  grid-area: cube;
+  justify-self: end;
+  width: var(--cube);
+  height: var(--cube);
+  margin: 0.4rem 0.6rem 0;
+  perspective: 600px;
+}
+
+.cube,
+.cube__spin {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.cube { transform: rotateX(-24deg) rotateY(-36deg); }
+
+.cube__spin { animation: spin 24s linear infinite; }
+
+@keyframes spin { to { transform: rotateY(360deg); } }
+
+.cube__face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--cube-fill);
+  border: var(--b) solid var(--line);
+  color: var(--head);
+  font: 800 calc(var(--cube) * 0.42)/1 var(--font-sans);
+  font-style: normal;
+}
+
+.cube__face svg { width: 45%; height: 45%; }
+
+.cube__face--front  { transform: translateZ(calc(var(--cube) / 2)); }
+.cube__face--back   { transform: rotateY(180deg) translateZ(calc(var(--cube) / 2)); font: 700 calc(var(--cube) * 0.26)/1 var(--font-code); }
+.cube__face--right  { transform: rotateY(90deg) translateZ(calc(var(--cube) / 2)); font-family: "Vazirmatn", var(--font-sans); }
+.cube__face--left   { transform: rotateY(-90deg) translateZ(calc(var(--cube) / 2)); }
+.cube__face--top    { transform: rotateX(90deg) translateZ(calc(var(--cube) / 2)); }
+.cube__face--bottom { transform: rotateX(-90deg) translateZ(calc(var(--cube) / 2)); }
+
+/* --------------------------------------------------------------------------
+   3. Directory listing
+   -------------------------------------------------------------------------- */
+
+.dir { margin-block-end: clamp(3rem, 8vw, 5.5rem); }
+
+.dir__cmd {
+  margin-block-end: 0.9rem;
+  color: var(--term);
+  font-size: var(--step--1);
+  font-weight: 700;
+}
+
+.dir__table td { vertical-align: middle; }
+
+/* The whole name cell is the link, so it is an easy target. */
+.dir__table a {
+  display: block;
+  margin-block: -0.85rem;
+  padding-block: 0.85rem;
+  color: var(--link);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}
+
+.dir__table a:hover {
+  background: var(--accent);
+  color: var(--accent-ink);
+  text-decoration: none;
+}
+
+.dir__sum {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  margin-block-start: 1rem;
+  color: var(--ink-2);
+  font-size: var(--step--1);
+}
+
+.dir__sum a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  min-height: 2.75rem;
+  color: var(--link);
+  font: 700 var(--step--2)/1 var(--font-ui);
+  text-transform: var(--case-ui);
+  letter-spacing: var(--track-ui);
+}
+
+.dir__sum a:hover { background: var(--accent); color: var(--accent-ink); }
+
+.dir__sum svg { width: 1.05em; height: 1.05em; }
+
+/* Narrow screens keep the two columns that matter — name and status — and
+   let a long status wrap rather than push the table out of its window. */
+@media (max-width: 34rem) {
+  .dir__table th:nth-child(2),
+  .dir__table td:nth-child(2),
+  .dir__table th:nth-child(4),
+  .dir__table td:nth-child(4) { display: none; }
+  .dir__table .badge { white-space: normal; }
+  .dir__table th,
+  .dir__table td { padding-inline: 0.55em; }
+}
+
+/* --------------------------------------------------------------------------
+   4. Case files
+   Each project carries its own hue (--hue, set inline). The theme decides
+   how saturated and how light it is drawn, through the --h-* tokens.
+   -------------------------------------------------------------------------- */
+
+.cases {
+  display: grid;
+  gap: clamp(3rem, 8vw, 5.5rem);
+}
+
+.case {
+  --c: hsl(var(--hue) var(--h-s) var(--h-l));
+  --c-shadow: hsl(var(--hue) 100% var(--h-shadow-l));
+}
+
+.case .win__bar {
+  background: hsl(var(--hue) 100% var(--h-bar));
+  color: hsl(var(--hue) 100% var(--h-bar-ink));
+}
+
+.case__body {
+  display: grid;
+  gap: clamp(1.25rem, 3vw, 2rem);
+}
+
+.case__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.case__year {
+  color: var(--ink-2);
+  font: 700 var(--step--2)/1 var(--font-ui);
+}
+
+.case__title {
+  margin-block: 1rem 0.4rem;
+  color: var(--c);
+  font-size: clamp(1.9rem, 1rem + 4.4vw, 4.6rem);
+  overflow-wrap: anywhere;
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  text-shadow: calc(var(--sx) * 0.05em) 0.05em 0 var(--c-shadow);
+}
+
+.case__tagline {
+  max-width: 46rem;
+  color: var(--head);
+  font-size: var(--step-1);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.case__grid {
+  display: grid;
+  gap: clamp(1.75rem, 4vw, 3rem);
+}
+
+@media (min-width: 60rem) {
+  .case__grid {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.case__text {
+  display: grid;
+  justify-items: start;
+  gap: 0.7rem;
+}
+
+.case__text h4 {
+  margin-block-start: 0.6rem;
+  color: var(--c);
+  font: 700 var(--step--2)/1.2 var(--font-ui);
+  text-transform: var(--case-ui);
+  letter-spacing: var(--track-ui);
+}
+
+.case__text h4::before { content: "// "; opacity: 0.7; }
+
+.case__text p { max-width: 42rem; }
+
+.case__facts { max-width: 30rem; margin-block-start: 0.8rem; }
+
+/* Narrow phones: each spec becomes label-over-value, so neither column
+   squeezes the other into one-word lines. */
+@media (max-width: 30rem) {
+  .table.case__facts tr { display: grid; }
+  .table.case__facts tbody th { width: auto; border-bottom: 0; padding-block-end: 0.15em; }
+  .table.case__facts td { border-top: 0; }
+}
+
+.case .actions { margin-block-start: 0.6rem; }
+
+/* --------------------------------------------------------------------------
+   5. Architecture stacks
+   Flat by default: a layer-cake diagram, readable anywhere. With the full
+   motion budget, the same list becomes an exploded isometric stack that
+   opens as it reaches the middle of the screen and turns with the pointer.
+   -------------------------------------------------------------------------- */
+
+.arch {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+  margin: 0;
+}
+
+.arch figcaption {
+  order: -1;
+  color: var(--ink-2);
+  font: 700 var(--step--2)/1.2 var(--font-ui);
+  text-transform: var(--case-ui);
+  letter-spacing: var(--track-ui);
+}
+
+.arch__stack {
+  display: grid;
+  gap: 6px;
+}
+
+.arch__stack li {
+  --lh: calc(var(--hue) + var(--z) * 12);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.2rem 1rem;
+  padding: 0.6rem 0.85rem;
+  background: hsl(var(--lh) 100% var(--h-fill-l) / var(--h-fill-a));
+  border: var(--b) solid hsl(var(--lh) var(--h-edge-s) var(--h-edge-l));
+  box-shadow: calc(var(--sx) * 3px) 3px 0 var(--shadow);
+  font-size: var(--step--1);
+}
+
+.arch__stack b { color: var(--head); font-weight: 700; }
+
+.arch__stack span { color: var(--ink-2); font-size: 0.92em; }
+
+.fx3d .arch { perspective: 1100px; }
+
+/* Sized against its column, not a fixed width: a plane turned on its
+   diagonal is ~1.2× its own width, and the pointer and scroll can turn it
+   that far, so 72% of the column always fits inside the window. */
+.fx3d .arch__stack {
+  --gap: 34px;
+  position: relative;
+  display: block;
+  width: min(72%, 15rem);
+  aspect-ratio: 3 / 2;
+  margin: 13.5rem auto 2.5rem;
+  transform-style: preserve-3d;
+  transform: rotateX(56deg) rotateZ(-36deg);
+}
+
+/* Labels sit in the near corner of each plane, tight, so layer labels
+   stay clear of each other when the stack is open. */
+.fx3d .arch__stack li {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: end;
+  justify-items: start;
+  padding: 0.5rem 0.7rem;
+  line-height: 1.2;
+  box-shadow: none;
+  transform: translateZ(calc(var(--z) * var(--gap) + var(--lift, 0px)));
+  transition: background-color 0.2s;
+}
+
+.fx3d .arch__stack span { font-size: 0.78em; }
+
+.fx3d .arch__stack li:hover {
+  --lift: 26px;
+  background: hsl(var(--lh) 100% var(--h-fill-l) / calc(var(--h-fill-a) + 0.3));
+}
+
+/* A hatched floor plate under the stack. */
+.fx3d .arch__stack::before {
+  content: "";
+  position: absolute;
+  inset: -8%;
+  border: 1px dashed var(--line);
+  background: repeating-linear-gradient(45deg, var(--line) 0 1px, transparent 1px 9px);
+  opacity: 0.3;
+  transform: translateZ(-28px);
+}
+
+/* --------------------------------------------------------------------------
+   6. Principles
+   -------------------------------------------------------------------------- */
+
+.rules {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: clamp(1.25rem, 3vw, 2rem);
+}
+
+.rule {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1.25rem 1.25rem 1.4rem;
+  background: var(--panel);
+  border: var(--b) solid var(--line);
+  box-shadow: calc(var(--sx) * var(--sh)) var(--sh) 0 var(--shadow);
+  transition: box-shadow 180ms var(--ease);
+}
+
+.rule:hover { --sh: 11px; }
+
+.rule__num {
+  align-self: flex-start;
+  padding: 0.2em 0.4em;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: var(--b) solid var(--line);
+  font: 800 var(--step-2)/1 var(--font-code);
+}
+
+html[lang="fa"] .rule__num { font-family: var(--font-sans); }
+
+.rule h3 { font-size: var(--step-1); }
+
+.rule__seen {
+  margin-block-start: auto;
+  padding-block-start: 0.7rem;
+  border-top: 1px dashed var(--line);
+  font-size: var(--step--1);
+}
+
+.rule__seen span {
+  margin-inline-end: 0.4em;
+  color: var(--ink-2);
+  font: 700 var(--step--2)/1 var(--font-ui);
+  text-transform: var(--case-ui);
+  letter-spacing: var(--track-ui);
+}
+
+.rule__seen a {
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.rule__seen a:hover { background: var(--accent); color: var(--accent-ink); text-decoration: none; }
+
+/* --------------------------------------------------------------------------
+   7. About + stack
+   -------------------------------------------------------------------------- */
+
+.about-grid {
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+@media (min-width: 56rem) {
+  .about-grid {
+    grid-template-columns: 1.15fr 1fr;
+    align-items: start;
+  }
+}
+
+.prose {
+  display: grid;
+  gap: 1rem;
+}
+
+.prose p:first-child {
+  color: var(--head);
+  font-size: var(--step-1);
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.stack-title {
+  margin-block: 0.7rem 1.1rem;
+  font-size: var(--step-2);
+}
+
+/* --------------------------------------------------------------------------
+   8. Contact
+   -------------------------------------------------------------------------- */
+
+.contact__body {
+  display: grid;
+  gap: 1.75rem;
+}
+
+@media (min-width: 52rem) {
+  .contact__body {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+}
+
+.contact__lead {
+  max-width: 36rem;
+  color: var(--head);
+  font-size: var(--step-2);
+  font-weight: 700;
+  line-height: 1.35;
+}

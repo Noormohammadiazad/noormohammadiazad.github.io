@@ -1,0 +1,53 @@
+name: Verify and deploy
+
+# This is the repository's only workflow. Before every push,
+# `npm run rotate:workflow` renames this file with a fresh UTC timestamp, so
+# each push starts again at run #1.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a running deployment finish rather than cancelling it half-published.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Build, performance budgets, English/Persian parity, the output files,
+      # this workflow's name, and the single-commit history. There are no
+      # dependencies, so there is nothing to install.
+      - name: Verify
+        run: npm run verify
+
+      # Needs Settings → Pages → Source set to "GitHub Actions".
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: verify
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,72 @@
+/* Loaded last on every page, so its overrides beat every component rule
+   above it: reduced-motion fallbacks, the page transition, print. */
+
+/* --------------------------------------------------------------------------
+   1. Motion preferences and page transitions
+   -------------------------------------------------------------------------- */
+
+/* Cross-document view transition: a quick CRT power-cycle when you change
+   language or page. Supported browsers only; others just navigate. */
+@view-transition { navigation: auto; }
+
+::view-transition-old(root) { animation: crt-off 200ms ease-in both; }
+::view-transition-new(root) { animation: crt-on 300ms var(--ease) both; }
+
+@keyframes crt-off {
+  to { opacity: 0; transform: scaleY(0.94); filter: brightness(1.8); }
+}
+
+@keyframes crt-on {
+  from { opacity: 0; clip-path: inset(48% 0 48% 0); filter: brightness(2); }
+  60%  { opacity: 1; }
+  to   { clip-path: inset(0 0 0 0); filter: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Still, not hidden: the marquee becomes a plain strip of text. */
+  .marquee__track { width: auto; animation: none; }
+  .marquee__group { flex-wrap: wrap; justify-content: center; min-width: 0; width: 100%; }
+  .marquee__group + .marquee__group { display: none; }
+  .marquee li { padding-block: 0.5em; }
+
+  .cube__spin,
+  .hazard::before,
+  .dot--blink,
+  .cursor,
+  .badge--building::before { animation: none; }
+
+  .btn:hover,
+  .btn:active { transform: none; }
+}
+
+/* --------------------------------------------------------------------------
+   2. Print
+   -------------------------------------------------------------------------- */
+
+@media print {
+  :root {
+    --bg: #ffffff; --panel: #ffffff; --bg-2: #ffffff; --ink: #000000;
+    --ink-2: #333333; --line: #000000; --head: #000000; --link: #000000;
+    --bar: #ffffff; --bar-ink: #000000; --shadow: transparent;
+  }
+  html { background: #ffffff; }
+  .tunnel, .marquee, .statusbar, .tools, .skip, .cube-stage, .hazard,
+  .term, [data-header-sentinel] { display: none !important; }
+  .site-header { position: static; }
+  body { padding: 0; }
+  .win, .rule, .sec-head { box-shadow: none; break-inside: avoid; transform: none !important; }
+  /* Undo the dive and the 3D stacks: paper gets the flat versions. */
+  .fx3d .hero { height: auto !important; }
+  .hero__stage { position: static !important; }
+  .hero__win { opacity: 1 !important; visibility: visible !important; }
+  .fx3d .arch__stack { display: grid; width: auto; aspect-ratio: auto; margin: 0; transform: none !important; }
+  .fx3d .arch__stack li { position: static; transform: none; }
+}
