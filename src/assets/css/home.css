@@ -1,0 +1,670 @@
+/* Home page. Concatenated after base.css by the build.
+
+   Everything here renders and reads correctly flat. `.fx3d` (set before
+   first paint by head.js, withheld for reduced motion and constrained
+   devices) adds the 3D: the Range timeline receding into depth, and the
+   choreography app.js gives windows as chapters hand over on scroll. */
+
+/* The Range camera's position along the axis (0–1). Registered so it can
+   be transitioned: selecting a time scale dollies the camera to it. */
+@property --f {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+/* --------------------------------------------------------------------------
+   1. Hero: the manifesto window, with a stack of windows behind it
+   -------------------------------------------------------------------------- */
+
+.hero { padding-block: clamp(3rem, 7vw, 5.5rem) clamp(2.5rem, 6vw, 4.5rem); }
+
+.hero__stack { position: relative; }
+
+.ghost {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-win);
+  background: var(--bar-off);
+  box-shadow: var(--elev);
+}
+
+.ghost[data-ghost="1"] { inset-inline: 3%; transform: translate3d(0, -12px, 0); }
+.ghost[data-ghost="2"] { inset-inline: 6%; transform: translate3d(0, -24px, 0); }
+
+@supports (corner-shape: squircle) {
+  .ghost { border-radius: var(--r-sq); corner-shape: squircle; }
+}
+
+.hero__body {
+  container-type: inline-size;
+  padding: clamp(1.75rem, 5vw, 3.5rem) clamp(1.25rem, 5vw, 3.5rem) clamp(1.75rem, 5vw, 3.25rem);
+}
+
+.hero__name {
+  margin-block-start: 0.5rem;
+  font-size: clamp(2.4rem, 13cqi, 5.75rem);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.hero__alt {
+  font-size: 0.3em;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.hero__thesis {
+  margin-block-start: 1.1rem;
+  max-width: 22em;
+  font-size: clamp(1.35rem, 0.9rem + 2vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+html[lang="fa"] .hero__name { letter-spacing: 0; line-height: 1.3; }
+html[lang="fa"] .hero__thesis { letter-spacing: 0; line-height: 1.65; }
+
+.hero__lead {
+  margin-block-start: 1rem;
+  max-width: 62ch;
+  font-size: var(--t-1);
+  color: var(--ink-2);
+}
+
+.hero .actions { margin-block-start: 1.75rem; }
+
+/* At a glance: a hairline grid, like an inspector's info panel. */
+.glance {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--hair);
+  border-block-start: 1px solid var(--hair);
+}
+
+.glance div { padding: 0.9rem clamp(1rem, 3vw, 1.5rem); background: var(--win-2); }
+.glance dt { font-size: var(--t-xs); color: var(--ink-3); }
+.glance dd { margin-block-start: 0.1rem; font-size: 0.9375rem; font-weight: 600; }
+
+@media (max-width: 47.99rem) {
+  .glance { grid-template-columns: 1fr 1fr; }
+}
+
+/* --------------------------------------------------------------------------
+   2. Sections
+   -------------------------------------------------------------------------- */
+
+.sec { padding-block: clamp(3rem, 7vw, 5.5rem); }
+
+.sec-head { max-width: 48rem; margin-block-end: clamp(1.5rem, 4vw, 2.5rem); }
+.sec-head h2 { margin-block-start: 0.45rem; font-size: var(--t-3); }
+
+.sec-head__intro {
+  margin-block-start: 0.9rem;
+  max-width: 62ch;
+  font-size: var(--t-1);
+  color: var(--ink-2);
+}
+
+.duo {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(1.25rem, 3vw, 2rem);
+}
+
+.duo--process { margin-block-start: clamp(1.25rem, 3vw, 2rem); }
+
+@media (max-width: 59.99rem) {
+  .duo { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* --------------------------------------------------------------------------
+   3. Range: nine time scales on one logarithmic axis
+   Flat, the scope is a strip chart: the axis, decade ticks, and a numbered
+   flag per time scale, staggered on three levels so neighbours never
+   collide. With .fx3d it becomes a timeline receding into depth — longer
+   time is further away — with each flag turned to face you. app.js moves
+   the camera (--f) to the selected scale, so choosing one dollies along
+   the axis: what came before slides past and fades, what comes after
+   draws closer. --g is the scroll's share: the camera pulls in as the
+   window rises into view.
+   -------------------------------------------------------------------------- */
+
+.scope {
+  position: relative;
+  height: 9.5rem;
+  overflow: hidden;
+  background: var(--win-2);
+  border-block-end: 1px solid var(--hair);
+  container-type: inline-size;
+}
+
+.track {
+  position: absolute;
+  inset-inline: 1.75rem;
+  top: 70%;
+  height: 0;
+}
+
+.axis {
+  position: absolute;
+  inset-inline: 0;
+  top: -1px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--hair);
+}
+
+.tick,
+.flag {
+  position: absolute;
+  top: 0;
+  inset-inline-start: calc(var(--p) * 100%);
+  width: 0;
+  height: 0;
+}
+
+.tick::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  inset-inline-start: -0.5px;
+  width: 1px;
+  height: 8px;
+  background: var(--ink-3);
+}
+
+.tick__label {
+  position: absolute;
+  top: 0.65rem;
+  inset-inline-start: 0;
+  translate: -50% 0;
+  font-size: 0.6875rem;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+[dir="rtl"] .tick__label { translate: 50% 0; }
+
+.flag { --stem: calc(0.9rem + var(--lv) * 1.4rem); }
+
+.flag__dot {
+  position: absolute;
+  top: -4px;
+  inset-inline-start: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--win);
+  box-shadow: 0 0 0 1.5px var(--ink-3);
+}
+
+.flag__stem {
+  position: absolute;
+  bottom: 4px;
+  inset-inline-start: -0.5px;
+  width: 1px;
+  height: var(--stem);
+  background: var(--hair);
+}
+
+.flag__card {
+  position: absolute;
+  bottom: calc(var(--stem) + 4px);
+  inset-inline-start: 0;
+  translate: -50% 0;
+  padding: 0.05rem 0.4rem;
+  border-radius: 6px;
+  background: var(--win);
+  box-shadow: 0 0 0 1px var(--hair);
+  font-size: 0.6875rem;
+  white-space: nowrap;
+  transition: color 0.2s, box-shadow 0.2s;
+}
+
+[dir="rtl"] .flag__card { translate: 50% 0; }
+
+.flag__n { font-family: var(--font-mono); font-weight: 600; }
+.flag__name,
+.flag__value { display: none; }
+
+.flag.is-on .flag__dot { background: var(--accent); box-shadow: 0 0 0 1.5px var(--accent), 0 0 0 5px var(--accent-2); }
+.flag.is-on .flag__stem { background: var(--accent); }
+.flag.is-on .flag__card { color: var(--accent); box-shadow: 0 0 0 1.5px var(--accent); }
+
+/* The receding timeline. */
+.fx3d .scope {
+  height: clamp(16rem, 32vw, 21rem);
+  perspective: 1400px;
+  perspective-origin: 28% 38%;
+  transition: --f 1.1s cubic-bezier(0.22, 0.8, 0.2, 1);
+}
+
+[dir="rtl"].fx3d .scope { perspective-origin: 72% 38%; }
+
+.fx3d .track {
+  --w: 260cqi;
+  --ry: 55deg;
+  inset-inline: auto;
+  inset-inline-start: 22%;
+  top: 72%;
+  width: var(--w);
+  transform-style: preserve-3d;
+  transform-origin: 0 0;
+  transform: rotateY(var(--ry)) translateX(calc((var(--f) + var(--g, 0)) * var(--w) * -1));
+}
+
+[dir="rtl"].fx3d .track {
+  transform-origin: 100% 0;
+  transform: rotateY(calc(var(--ry) * -1)) translateX(calc((var(--f) + var(--g, 0)) * var(--w)));
+}
+
+.fx3d .axis { height: 3px; background: linear-gradient(to right, var(--ink-3), var(--hair) 70%); }
+[dir="rtl"].fx3d .axis { background: linear-gradient(to left, var(--ink-3), var(--hair) 70%); }
+
+/* Flags and ticks turn back to face the viewer, and fade out once the
+   camera has passed them. */
+.fx3d .tick,
+.fx3d .flag {
+  transform-style: preserve-3d;
+  transform: rotateY(calc(var(--ry) * -1));
+  opacity: clamp(0, 1 + (var(--p) - var(--f) - var(--g, 0)) * 14, 1);
+}
+
+[dir="rtl"].fx3d .tick,
+[dir="rtl"].fx3d .flag { transform: rotateY(var(--ry)); }
+
+.fx3d .flag { --stem: calc(1.3rem + var(--lv) * 3rem); }
+
+.fx3d .tick__label { translate: none; }
+
+.fx3d .flag__card {
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 0.45rem;
+  align-items: baseline;
+  translate: none;
+  inset-inline-start: -1px;
+  padding: 0.35rem 0.65rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  box-shadow: 0 0 0 1px var(--hair), 0 4px 12px -6px rgba(var(--sh), 0.25);
+  cursor: pointer;
+}
+
+.fx3d .flag__name { display: block; font-weight: 600; }
+.fx3d .flag__value { display: block; grid-column: 2; font-family: var(--font-mono); color: var(--ink-3); }
+.fx3d .flag.is-on .flag__value { color: inherit; }
+
+/* Narrow scopes: number and value only — the names are in the list just
+   below — and the camera a little further along. */
+@container (max-width: 33.99rem) {
+  .fx3d .flag__name { display: none; }
+  .fx3d .track { inset-inline-start: 14%; }
+}
+
+/* The list of scales and the inspector. */
+.range { display: grid; grid-template-columns: minmax(15rem, 0.85fr) minmax(0, 1.3fr); }
+
+.scales {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  padding: 0.75rem;
+  border-inline-end: 1px solid var(--hair);
+}
+
+.scale {
+  display: grid;
+  grid-template-columns: 1.6rem minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.scale:hover { background: var(--hair-2); }
+
+.scale__n,
+.scale__v { font-family: var(--font-mono); font-size: var(--t-xs); color: var(--ink-3); }
+
+.scale__v { white-space: nowrap; }
+
+.scale.is-on { background: var(--btn); color: var(--btn-ink); }
+.scale.is-on .scale__n,
+.scale.is-on .scale__v { color: inherit; opacity: 0.8; }
+
+@media (max-width: 51.99rem) {
+  .range { grid-template-columns: minmax(0, 1fr); }
+  .scales {
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    border-inline-end: 0;
+    border-block-end: 1px solid var(--hair);
+  }
+}
+
+/* Without JavaScript every panel is shown, as a list. With it, they share
+   one grid cell (so switching never moves the page) and only the selected
+   one is visible. */
+.inspector { padding: clamp(1.25rem, 3.5vw, 2.25rem); }
+
+.panel + .panel {
+  margin-block-start: 2rem;
+  padding-block-start: 2rem;
+  border-block-start: 1px solid var(--hair);
+}
+
+.js .inspector { display: grid; }
+
+.js .panel {
+  grid-area: 1 / 1;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.2s, visibility 0s 0.2s;
+}
+
+.js .panel + .panel { margin: 0; padding: 0; border: 0; }
+
+.js .panel.is-on,
+.js:not(.has-focus) .panel:target {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+
+.zone {
+  display: inline-flex;
+  padding: 0.15rem 0.7rem;
+  border-radius: 99px;
+  background: var(--hair-2);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.panel h3 { margin-block-start: 0.85rem; font-size: var(--t-2); }
+
+.panel__v {
+  margin-inline-start: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.55em;
+  font-weight: 500;
+  color: var(--accent);
+  white-space: nowrap;
+  vertical-align: 0.2em;
+}
+
+.facts { margin-block-start: 1.25rem; border-block-start: 1px solid var(--hair); }
+
+.facts div {
+  display: grid;
+  grid-template-columns: 9.5rem minmax(0, 1fr);
+  gap: 0.2rem 1rem;
+  padding-block: 0.75rem;
+  border-block-end: 1px solid var(--hair);
+}
+
+.facts dt { padding-block-start: 0.1em; font-size: var(--t-sm); font-weight: 500; color: var(--ink-3); }
+.facts dd { font-size: 0.9375rem; }
+
+@media (max-width: 29.99rem) {
+  .facts div { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* --------------------------------------------------------------------------
+   4. Principles
+   One window each, cascading down the desk. The rule / mechanism / check
+   grid is a list underneath; on narrow screens each row stacks and the
+   column names appear as labels.
+   -------------------------------------------------------------------------- */
+
+.pr-list { display: grid; gap: clamp(1.25rem, 3vw, 2rem); }
+
+.pr { width: min(100%, 64rem); }
+.pr:nth-child(even) { margin-inline-start: auto; }
+
+.pr__body { padding: clamp(1.25rem, 4vw, 2.5rem); }
+
+.pr__statement {
+  max-width: 32ch;
+  font-size: clamp(1.35rem, 1rem + 1.5vw, 2rem);
+  font-weight: 650;
+  line-height: 1.22;
+  letter-spacing: var(--track-h);
+  text-wrap: balance;
+}
+
+html[lang="fa"] .pr__statement { line-height: 1.6; }
+
+.pr__why { margin-block-start: 0.8rem; max-width: 68ch; color: var(--ink-2); }
+
+.rules {
+  margin-block-start: 1.75rem;
+  border-radius: 14px;
+  box-shadow: 0 0 0 1px var(--hair);
+  overflow: hidden;
+  font-size: 0.9375rem;
+}
+
+.rules__head,
+.rule {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.3fr) minmax(0, 1fr);
+}
+
+.rules__head { background: var(--win-2); font-size: var(--t-xs); font-weight: 600; color: var(--ink-3); }
+
+.rules__head span,
+.rule > p { padding: 0.7rem 1rem; }
+
+.rule { border-block-start: 1px solid var(--hair); transition: background-color 0.15s; }
+.rule:hover { background: var(--hair-2); }
+.rule > p + p { border-inline-start: 1px solid var(--hair-2); }
+.rule__k { font-weight: 600; }
+.rule__m { color: var(--ink-2); }
+
+.lbl {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 47.99rem) {
+  .rules__head { display: none; }
+  .rule { grid-template-columns: minmax(0, 1fr); gap: 0.45rem; padding: 0.9rem 1rem; }
+  .rule:first-child { border-block-start: 0; }
+  .rule > p { padding: 0; }
+  .rule > p + p { border: 0; }
+  .lbl {
+    position: static;
+    display: block;
+    width: auto;
+    height: auto;
+    clip-path: none;
+    white-space: normal;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--ink-3);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. Process: pipeline, budget monitor, toolbox
+   -------------------------------------------------------------------------- */
+
+.steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+.step {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 0.5rem;
+  padding: 1.5rem 1.25rem;
+}
+
+.step + .step { border-inline-start: 1px solid var(--hair); }
+
+/* A chevron on each divider, pointing the way the work flows. */
+.step + .step::before {
+  content: "";
+  position: absolute;
+  top: 1.75rem;
+  inset-inline-start: -5px;
+  width: 9px;
+  height: 9px;
+  background: var(--win);
+  border-block-start: 1px solid var(--ink-3);
+  border-inline-end: 1px solid var(--ink-3);
+  transform: rotate(45deg);
+}
+
+[dir="rtl"] .step + .step::before { transform: rotate(-45deg); }
+
+.step .step__n { font-family: var(--font-mono); font-size: var(--t-xs); font-weight: 600; color: var(--accent); }
+.step h3 { font-size: 1.0625rem; letter-spacing: -0.01em; }
+.step p { margin-block-start: 0.35rem; font-size: 0.9rem; color: var(--ink-2); }
+
+.step .step__out {
+  margin-block-start: 0.85rem;
+  padding-block-start: 0.75rem;
+  border-block-start: 1px dashed var(--hair);
+  font-size: var(--t-sm);
+  color: var(--ink);
+}
+
+.step__out span { display: block; font-size: 0.6875rem; font-weight: 600; color: var(--ink-3); }
+
+@media (max-width: 59.99rem) {
+  .steps { grid-template-columns: minmax(0, 1fr); }
+  .step { grid-template-columns: 2.25rem minmax(0, 1fr); padding: 1.1rem 1.25rem; }
+  .step .step__n { margin: 0; padding-block-start: 0.2rem; }
+  .step + .step { border-inline-start: 0; border-block-start: 1px solid var(--hair); }
+  .step + .step::before { top: -5px; inset-inline-start: 1.55rem; transform: rotate(135deg); }
+  [dir="rtl"] .step + .step::before { transform: rotate(-135deg); }
+}
+
+.ok { display: inline-flex; align-items: center; gap: 0.4rem; }
+.ok::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #28c840; }
+
+.budget table { width: 100%; font-size: 0.9375rem; }
+
+.budget th,
+.budget td {
+  padding: 0.65rem clamp(0.6rem, 2.5vw, 1.25rem);
+  border-block-end: 1px solid var(--hair);
+  text-align: start;
+  vertical-align: top;
+}
+
+.budget thead th {
+  padding-block: 0.5rem;
+  background: var(--win-2);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  color: var(--ink-3);
+}
+
+.budget tbody th { font-weight: 500; }
+
+.budget caption {
+  caption-side: bottom;
+  padding: 0.9rem clamp(0.6rem, 2.5vw, 1.25rem) 0;
+  font-size: var(--t-sm);
+  text-align: start;
+  color: var(--ink-2);
+}
+
+.budget__note { padding: 0.3rem clamp(0.6rem, 2.5vw, 1.25rem) 1.1rem; font-size: var(--t-xs); color: var(--ink-3); }
+
+.num { font-family: var(--font-mono); font-size: var(--t-sm); font-variant-numeric: tabular-nums; }
+.pct { display: inline-block; font-size: var(--t-xs); color: var(--ink-3); }
+
+.meter {
+  display: block;
+  min-width: 3.5rem;
+  height: 5px;
+  margin-block-start: 0.45rem;
+  border-radius: 3px;
+  background: var(--hair);
+  overflow: hidden;
+}
+
+.meter i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transform: scaleX(var(--v));
+  transform-origin: left;
+  transition: transform 1.1s var(--ease) 0.15s;
+}
+
+[dir="rtl"] .meter i { transform-origin: right; }
+
+/* The meters fill when the monitor first comes into view. */
+.has-focus .budget:not(.is-seen) .meter i { transform: scaleX(0); }
+
+.toolbox div {
+  display: grid;
+  grid-template-columns: minmax(6rem, 8.5rem) minmax(0, 1fr);
+  gap: 0.35rem 1rem;
+  padding: 0.85rem 1.25rem;
+  border-block-end: 1px solid var(--hair);
+}
+
+.toolbox div:last-child { border-block-end: 0; }
+.toolbox dt { padding-block-start: 0.15rem; font-size: var(--t-sm); font-weight: 500; color: var(--ink-3); }
+.toolbox dd { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+
+.tag {
+  padding: 0.1rem 0.5rem;
+  border-radius: 5px;
+  background: var(--hair-2);
+  box-shadow: inset 0 0 0 1px var(--hair-2);
+  font-size: var(--t-sm);
+  white-space: nowrap;
+}
+
+@media (max-width: 25.99rem) {
+  .toolbox div { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* --------------------------------------------------------------------------
+   6. Contact and colophon
+   -------------------------------------------------------------------------- */
+
+.prose {
+  display: grid;
+  gap: 1rem;
+  max-width: 68ch;
+  padding: clamp(1.25rem, 4vw, 2.25rem);
+  color: var(--ink-2);
+}
+
+.prose { font-size: 0.9375rem; }
+
+.contact { display: grid; gap: 0.75rem; padding: clamp(1.25rem, 4vw, 2.25rem); }
+.contact h3 { font-size: var(--t-2); }
+.contact p:not(.actions) { color: var(--ink-2); }
+.contact .actions { margin-block-start: 0.5rem; }
+
+/* --------------------------------------------------------------------------
+   7. Choreography
+   app.js moves these with transforms and opacity only; promoting them up
+   front means scrolling never triggers a repaint.
+   -------------------------------------------------------------------------- */
+
+.fx3d [data-depth],
+.fx3d .ghost { will-change: transform, opacity; }

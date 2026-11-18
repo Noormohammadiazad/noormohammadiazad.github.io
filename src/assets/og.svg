@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <!-- Authored on a square canvas: QuickLook (the macOS rasteriser used by
+       tools/make-images.sh) rescales non-square SVGs. The 1200x630 social
+       card is the band at translate(0 285), cropped out by the script.
+       The same desk, window and mark as the site, in light mode. -->
+  <defs>
+    <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse">
+      <circle cx="11" cy="11" r="1.1" fill="#17150f" fill-opacity="0.1"/>
+    </pattern>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+    <clipPath id="win"><rect x="150" y="80" width="900" height="480" rx="24"/></clipPath>
+  </defs>
+
+  <rect width="1200" height="1200" fill="#f2eee3"/>
+  <rect width="1200" height="1200" fill="url(#dots)"/>
+
+  <g transform="translate(0 285)" font-family="-apple-system, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif">
+    <!-- The windows stacked behind. -->
+    <rect x="204" y="52" width="792" height="480" rx="24" fill="#f8f5ed" stroke="#17150f" stroke-opacity="0.12"/>
+    <rect x="177" y="66" width="846" height="480" rx="24" fill="#f8f5ed" stroke="#17150f" stroke-opacity="0.12"/>
+
+    <!-- The manifesto window. -->
+    <rect x="170" y="120" width="860" height="460" rx="30" fill="#40300e" fill-opacity="0.22" filter="url(#shadow)"/>
+    <g clip-path="url(#win)">
+      <rect x="150" y="80" width="900" height="480" fill="#fffdf6"/>
+      <rect x="150" y="80" width="900" height="48" fill="#f2ede1"/>
+      <rect x="150" y="127" width="900" height="1" fill="#17150f" fill-opacity="0.12"/>
+      <rect x="150" y="468" width="900" height="92" fill="#f8f4ea"/>
+      <rect x="150" y="468" width="900" height="1" fill="#17150f" fill-opacity="0.12"/>
+      <rect x="375" y="469" width="1" height="91" fill="#17150f" fill-opacity="0.12"/>
+      <rect x="600" y="469" width="1" height="91" fill="#17150f" fill-opacity="0.12"/>
+      <rect x="825" y="469" width="1" height="91" fill="#17150f" fill-opacity="0.12"/>
+    </g>
+    <rect x="150.5" y="80.5" width="899" height="479" rx="24" fill="none" stroke="#17150f" stroke-opacity="0.14"/>
+
+    <!-- Title bar: window controls, glyph and title. -->
+    <circle cx="178" cy="104" r="7" fill="#ff5f57"/>
+    <circle cx="200" cy="104" r="7" fill="#febc2e"/>
+    <circle cx="222" cy="104" r="7" fill="#28c840"/>
+    <g transform="translate(549 95) scale(1.1)" fill="none" stroke="#4a473f" stroke-width="1.5" stroke-linejoin="round">
+      <path d="M8 2.5A11 11 0 0 1 13.5 12.03A11 11 0 0 1 2.5 12.03A11 11 0 0 1 8 2.5Z"/>
+      <circle cx="8" cy="8.85" r="1.6" fill="#4a473f" stroke="none"/>
+    </g>
+    <text x="575" y="110" font-size="17" font-weight="600" fill="#4a473f">Manifesto</text>
+
+    <!-- Body. -->
+    <text x="206" y="188" font-size="21" font-weight="600" fill="#2451b8">Software engineer · Computer engineering student</text>
+    <text x="202" y="288" font-size="94" font-weight="700" letter-spacing="-3.6" fill="#17150f">Mohammadali</text>
+    <text x="796" y="286" font-size="30" font-weight="500" fill="#6f6a5d">محمدعلی</text>
+    <text font-size="35" font-weight="600" letter-spacing="-0.6" fill="#17150f">
+      <tspan x="206" y="356">Software that keeps its promises under hard</tspan>
+      <tspan x="206" y="402">constraints: a frame, an audio buffer, a key, a byte.</tspan>
+    </text>
+
+    <!-- At a glance. -->
+    <g font-size="14" fill="#6f6a5d">
+      <text x="178" y="502">Range</text>
+      <text x="403" y="502">Tightest deadline</text>
+      <text x="628" y="502">Default</text>
+      <text x="853" y="502">Languages</text>
+    </g>
+    <g font-size="18" font-weight="600" fill="#17150f">
+      <text x="178" y="532">12 orders of magnitude</text>
+      <text x="403" y="532">2.7 ms, one audio buffer</text>
+      <text x="628" y="532">Runs on your device</text>
+      <text x="853" y="532">English · فارسی</text>
+    </g>
+  </g>
+</svg>

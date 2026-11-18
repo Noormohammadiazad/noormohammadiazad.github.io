@@ -1,0 +1,59 @@
+/* Loaded last on every page, so its overrides beat every component rule
+   above it: the page transition, reduced-motion fallbacks, print. */
+
+/* --------------------------------------------------------------------------
+   1. Page transitions
+   Cross-document view transition between languages and pages: a quick,
+   quiet crossfade.
+   -------------------------------------------------------------------------- */
+
+@view-transition { navigation: auto; }
+
+::view-transition-old(root) { animation: vt-out 180ms var(--ease) both; }
+::view-transition-new(root) { animation: vt-in 260ms var(--ease) both; }
+
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in  { from { opacity: 0; } }
+
+/* --------------------------------------------------------------------------
+   2. Reduced motion
+   Nothing glides, zooms, fills or springs. The 3D layer is never built
+   (head.js), so windows stay put and the Range map is a flat strip chart;
+   app.js stands down at once if the setting changes mid-visit.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+
+  .btn:active { transform: none; }
+}
+
+/* --------------------------------------------------------------------------
+   3. Print
+   Paper gets the flat versions: no menu bar, no shadows, every time scale
+   of the Range map listed in full.
+   -------------------------------------------------------------------------- */
+
+@media print {
+  :root {
+    --desk: #ffffff; --win: #ffffff; --win-2: #ffffff; --bar: #ffffff; --bar-off: #ffffff;
+    --ink: #000000; --ink-2: #222222; --ink-3: #555555; --hair: #cccccc; --hair-2: #e5e5e5;
+    --elev: none; --elev-hi: none;
+  }
+  body { background: none; }
+  .menubar, .skip, .ghost, .lights { display: none !important; }
+  .win { box-shadow: 0 0 0 1px #cccccc; break-inside: avoid; }
+  [data-depth] { transform: none !important; opacity: 1 !important; }
+  .js .inspector { display: block; }
+  .js .panel { visibility: visible; opacity: 1; }
+  .js .panel + .panel { margin-block-start: 1.5rem; padding-block-start: 1.5rem; border-block-start: 1px solid #cccccc; }
+  .scope { display: none; }
+  .meter i { transform: scaleX(var(--v)) !important; }
+}

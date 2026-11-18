@@ -1,0 +1,527 @@
+/* ==========================================================================
+   mammadali.ir — shared styles (every page)
+
+   A desk with windows on it. Light mode is warm paper and ink; dark mode is
+   graphite: charcoal surfaces, soft hairlines, warm greys and one quiet
+   blue. Colour is used for state (focus, selection, the window controls),
+   never for decoration.
+
+   Layout uses CSS logical properties throughout, so the Persian (RTL) page
+   mirrors from the same rules — window controls included, as on a Mac set
+   to a right-to-left language.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Tokens
+   -------------------------------------------------------------------------- */
+
+:root {
+  /* Light: paper and ink. */
+  --desk:      #f2eee3;
+  --dot:       rgba(23, 21, 15, 0.08);
+  --win:       #fffdf6;
+  --win-2:     #f8f4ea;
+  --bar:       #f2ede1;
+  --bar-off:   #f8f5ed;
+  --menubar:   rgba(242, 238, 227, 0.8);
+  --ink:       #17150f;
+  --ink-2:     #4a473f;
+  --ink-3:     #6f6a5d;
+  --hair:      rgba(23, 21, 15, 0.12);
+  --hair-2:    rgba(23, 21, 15, 0.06);
+  --rim:       rgba(23, 21, 15, 0.13);
+  --rim-in:    transparent;
+  --accent:    #2451b8;
+  --accent-2:  rgba(36, 81, 184, 0.1);
+  --btn:       #2451b8;
+  --btn-ink:   #ffffff;
+  --ctl:       #fffdf6;
+  --ctl-rim:   rgba(23, 21, 15, 0.18);
+  --light-off: #d9d3c5;
+  --sh:        64, 46, 14;
+  --elev:      0 0 0 1px var(--rim), 0 1px 2px rgba(var(--sh), 0.05), 0 8px 22px -10px rgba(var(--sh), 0.14), 0 24px 48px -26px rgba(var(--sh), 0.16);
+  --elev-hi:   0 0 0 1px var(--rim), 0 1px 2px rgba(var(--sh), 0.07), 0 16px 34px -12px rgba(var(--sh), 0.2), 0 44px 90px -34px rgba(var(--sh), 0.3);
+
+  /* Type: the system's own faces, so English pages download no fonts. */
+  --font-sans: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  --track-h: -0.025em;
+  --lh: 1.6;
+  --lh-tight: 1.12;
+
+  --t-xs: 0.75rem;
+  --t-sm: 0.8125rem;
+  --t-1:  clamp(1.05rem, 1rem + 0.25vw, 1.15rem);
+  --t-2:  clamp(1.3rem, 1.1rem + 0.9vw, 1.7rem);
+  --t-3:  clamp(1.85rem, 1.25rem + 2.4vw, 2.9rem);
+
+  /* Geometry */
+  --wrap: 72rem;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  /* Windows are sculpted, not boxed: a 24px radius, and where the browser
+     can draw it, a continuous squircle curve whose visible radius lands in
+     the same 22–28px range (a squircle needs a larger nominal radius to
+     look the same size, because it eases into the straight edge). */
+  --r-win: 24px;
+  --r-sq: 36px;
+  --r-ctl: 10px;
+  --mb: 2.75rem;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  color-scheme: light;
+}
+
+/* Dark: graphite. Applied when the OS asks for it, unless the visitor
+   chose light, or when the visitor chose dark explicitly. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --desk:      #161618;
+    --dot:       rgba(255, 255, 255, 0.045);
+    --win:       #232325;
+    --win-2:     #1d1d1f;
+    --bar:       #2e2e31;
+    --bar-off:   #28282a;
+    --menubar:   rgba(22, 22, 24, 0.74);
+    --ink:       #ebe8e3;
+    --ink-2:     #b3aea5;
+    --ink-3:     #948f86;
+    --hair:      rgba(255, 255, 255, 0.09);
+    --hair-2:    rgba(255, 255, 255, 0.05);
+    --rim:       rgba(0, 0, 0, 0.6);
+    --rim-in:    rgba(255, 255, 255, 0.075);
+    --accent:    #9db6e4;
+    --accent-2:  rgba(157, 182, 228, 0.12);
+    --btn:       #40619e;
+    --btn-ink:   #ffffff;
+    --ctl:       #3a3a3d;
+    --ctl-rim:   rgba(0, 0, 0, 0.5);
+    --light-off: #48484c;
+    --sh:        0, 0, 0;
+    --elev:      0 0 0 1px var(--rim), 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 24px -10px rgba(0, 0, 0, 0.5), 0 26px 52px -26px rgba(0, 0, 0, 0.55);
+    --elev-hi:   0 0 0 1px var(--rim), 0 1px 2px rgba(0, 0, 0, 0.35), 0 18px 38px -12px rgba(0, 0, 0, 0.6), 0 48px 96px -34px rgba(0, 0, 0, 0.7);
+    color-scheme: dark;
+  }
+  :root:not([data-theme="light"]) .i-moon { display: none; }
+  :root:not([data-theme="light"]) .i-sun { display: block; }
+}
+
+:root[data-theme="dark"] {
+  --desk:      #161618;
+  --dot:       rgba(255, 255, 255, 0.045);
+  --win:       #232325;
+  --win-2:     #1d1d1f;
+  --bar:       #2e2e31;
+  --bar-off:   #28282a;
+  --menubar:   rgba(22, 22, 24, 0.74);
+  --ink:       #ebe8e3;
+  --ink-2:     #b3aea5;
+  --ink-3:     #948f86;
+  --hair:      rgba(255, 255, 255, 0.09);
+  --hair-2:    rgba(255, 255, 255, 0.05);
+  --rim:       rgba(0, 0, 0, 0.6);
+  --rim-in:    rgba(255, 255, 255, 0.075);
+  --accent:    #9db6e4;
+  --accent-2:  rgba(157, 182, 228, 0.12);
+  --btn:       #40619e;
+  --btn-ink:   #ffffff;
+  --ctl:       #3a3a3d;
+  --ctl-rim:   rgba(0, 0, 0, 0.5);
+  --light-off: #48484c;
+  --sh:        0, 0, 0;
+  --elev:      0 0 0 1px var(--rim), 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 24px -10px rgba(0, 0, 0, 0.5), 0 26px 52px -26px rgba(0, 0, 0, 0.55);
+  --elev-hi:   0 0 0 1px var(--rim), 0 1px 2px rgba(0, 0, 0, 0.35), 0 18px 38px -12px rgba(0, 0, 0, 0.6), 0 48px 96px -34px rgba(0, 0, 0, 0.7);
+  color-scheme: dark;
+}
+:root[data-theme="dark"] .i-moon { display: none; }
+:root[data-theme="dark"] .i-sun { display: block; }
+
+/* --------------------------------------------------------------------------
+   2. Persian
+   Vazirmatn, subset to Persian + Latin, loads on /fa/ pages only. Arabic
+   script is never letter-spaced (it breaks cursive joining) and has no
+   case, and it gets more leading than Latin.
+   -------------------------------------------------------------------------- */
+
+html[lang="fa"] {
+  --font-sans: "Vazirmatn", "Segoe UI", Tahoma, "Geeza Pro", "Noto Naskh Arabic", sans-serif;
+  /* No monospace face has Persian letters, and borrowing a mono face's
+     wide spaces breaks up a Persian phrase; mono roles use Vazirmatn. */
+  --font-mono: "Vazirmatn", ui-monospace, Menlo, Consolas, monospace;
+  --track-h: 0;
+  --lh: 1.9;
+  --lh-tight: 1.45;
+}
+
+[lang="fa"] { font-family: "Vazirmatn", "Segoe UI", Tahoma, "Geeza Pro", sans-serif; letter-spacing: 0; }
+html[lang="fa"] [lang="en"] { font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, sans-serif; }
+
+/* Directional glyphs point the reading direction. */
+[dir="rtl"] .i-fwd { transform: scaleX(-1); }
+
+/* --------------------------------------------------------------------------
+   3. Base
+   -------------------------------------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+* { margin: 0; }
+
+html {
+  background-color: var(--desk);
+  color: var(--ink);
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-block-start: calc(var(--mb) + 1.5rem);
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+/* The desk: a faint dot grid, painted once and scrolled with the page. */
+body {
+  min-height: 100svh;
+  background-image: radial-gradient(var(--dot) 1px, transparent 1.5px);
+  background-size: 22px 22px;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: var(--lh);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3 {
+  line-height: var(--lh-tight);
+  letter-spacing: var(--track-h);
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+p { text-wrap: pretty; }
+
+a { color: inherit; text-decoration: none; }
+
+ul, ol { list-style: none; padding: 0; }
+
+dd { margin: 0; }
+
+svg { display: block; flex: none; }
+
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+
+table { border-collapse: collapse; }
+
+::selection { background: var(--accent-2); }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+.wrap {
+  width: min(100% - 2 * var(--gutter), var(--wrap));
+  margin-inline: auto;
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip {
+  position: absolute;
+  inset-inline-start: 1rem;
+  top: -5rem;
+  z-index: 100;
+  padding: 0.6rem 1rem;
+  border-radius: var(--r-ctl);
+  background: var(--btn);
+  color: var(--btn-ink);
+  font-weight: 600;
+}
+
+.skip:focus { top: 0.5rem; }
+
+.kicker {
+  font-size: var(--t-sm);
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.glyph { width: 1rem; height: 1rem; }
+
+/* --------------------------------------------------------------------------
+   4. Menu bar
+   Translucent over the desk, like the one on a Mac. Constrained devices
+   and visitors who ask for less transparency get it solid.
+   -------------------------------------------------------------------------- */
+
+.menubar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--mb);
+  background: var(--menubar);
+  -webkit-backdrop-filter: saturate(1.6) blur(18px);
+  backdrop-filter: saturate(1.6) blur(18px);
+  box-shadow: 0 1px 0 var(--hair-2);
+}
+
+.lite .menubar { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--desk); }
+
+@media (prefers-reduced-transparency: reduce) {
+  .menubar { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--desk); }
+}
+
+.menubar__in {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  height: 100%;
+  padding-inline: max(var(--gutter), env(safe-area-inset-left)) max(var(--gutter), env(safe-area-inset-right));
+  font-size: 0.875rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-inline-end: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.menu { display: flex; gap: 0.125rem; }
+
+.menu a,
+.icon-btn {
+  border-radius: 6px;
+  transition: background-color 0.15s;
+}
+
+.menu a { padding: 0.25rem 0.6rem; color: var(--ink-2); }
+
+.menu a:hover,
+.icon-btn:hover { background: var(--hair-2); color: var(--ink); }
+
+.menu a[aria-current] { background: var(--hair); color: var(--ink); }
+
+@media (max-width: 47.99rem) {
+  .menu { display: none; }
+}
+
+.tools {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-inline-start: auto;
+}
+
+/* Segmented control: the selected segment is a raised key. */
+.seg {
+  display: flex;
+  padding: 2px;
+  border-radius: var(--r-ctl);
+  background: var(--hair-2);
+  box-shadow: inset 0 0 0 1px var(--hair-2);
+}
+
+.seg a {
+  display: grid;
+  place-items: center;
+  min-width: 2.375rem;
+  height: 1.625rem;
+  border-radius: 6px;
+  font-size: var(--t-xs);
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.seg a[aria-current] {
+  background: var(--win);
+  color: var(--ink);
+  box-shadow: 0 0 0 0.5px var(--ctl-rim), 0 1px 2px rgba(var(--sh), 0.16);
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  color: var(--ink-2);
+}
+
+.icon-btn svg { width: 1rem; height: 1rem; }
+
+.i-sun { display: none; }
+
+@media (pointer: coarse) {
+  :root { --mb: 3.25rem; }
+  .seg a { min-width: 2.75rem; height: 2.5rem; }
+  .icon-btn { width: 2.75rem; height: 2.75rem; }
+}
+
+/* --------------------------------------------------------------------------
+   5. Windows
+   A title bar with the three window controls and a centred title, over a
+   body. The window nearest your reading line is the active one (app.js):
+   full-colour controls and the deeper shadow. The rest go grey and settle
+   back, as inactive windows do. Without JavaScript every window is active.
+   -------------------------------------------------------------------------- */
+
+.win {
+  position: relative;
+  border-radius: var(--r-win);
+  background: var(--win);
+  box-shadow: var(--elev-hi);
+  overflow: hidden;
+  overflow: clip;
+  transition: box-shadow 0.35s var(--ease);
+}
+
+@supports (corner-shape: squircle) {
+  .win { border-radius: var(--r-sq); corner-shape: squircle; }
+}
+
+/* The inner rim: a light edge just inside the dark outline, in dark mode. */
+.win::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--rim-in);
+  pointer-events: none;
+}
+
+.win__bar {
+  display: grid;
+  grid-template-columns: minmax(3.25rem, 1fr) minmax(0, auto) minmax(3.25rem, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.875rem;
+  padding-inline: 1.15rem;
+  background: var(--bar);
+  border-block-end: 1px solid var(--hair);
+  transition: background-color 0.35s var(--ease);
+}
+
+.lights { display: flex; gap: 8px; }
+
+.lights i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--l, #ff5f57);
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.22);
+  transition: background-color 0.35s var(--ease);
+}
+
+.lights i:nth-child(2) { --l: #febc2e; }
+.lights i:nth-child(3) { --l: #28c840; }
+
+.win__title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-width: 0;
+  font-size: var(--t-sm);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0;
+  color: var(--ink-2);
+}
+
+.win__title span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.win__acc {
+  justify-self: end;
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+@media (max-width: 29.99rem) {
+  .win__bar { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .win__acc { display: none; }
+  .win__title { justify-content: start; }
+}
+
+.has-focus .win:not(.is-active) { box-shadow: var(--elev); }
+.has-focus .win:not(.is-active) .win__bar { background: var(--bar-off); }
+.has-focus .win:not(.is-active) .lights i { background: var(--light-off); }
+.has-focus .win:not(.is-active) .win__title { color: var(--ink-3); }
+
+/* --------------------------------------------------------------------------
+   6. Buttons
+   -------------------------------------------------------------------------- */
+
+.actions { display: flex; flex-wrap: wrap; gap: 0.625rem; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.375rem;
+  padding: 0.4rem 1rem;
+  border-radius: var(--r-ctl);
+  background: var(--ctl);
+  color: var(--ink);
+  box-shadow: 0 0 0 0.5px var(--ctl-rim), 0 1px 2px rgba(var(--sh), 0.12);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.2;
+  transition: filter 0.15s, transform 0.15s var(--ease);
+}
+
+.btn svg { width: 1rem; height: 1rem; }
+
+.btn--primary {
+  background: var(--btn);
+  color: var(--btn-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 0 0 0.5px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(var(--sh), 0.24);
+}
+
+.btn:hover { filter: brightness(1.06); }
+.btn:active { filter: brightness(0.94); transform: scale(0.985); }
+
+.btn--block { width: 100%; }
+
+@media (pointer: coarse) {
+  .btn { min-height: 2.75rem; }
+}
+
+/* --------------------------------------------------------------------------
+   7. Footer
+   -------------------------------------------------------------------------- */
+
+.foot {
+  padding-block: 2.25rem calc(2.75rem + env(safe-area-inset-bottom));
+  border-block-start: 1px solid var(--hair-2);
+  font-size: var(--t-sm);
+  color: var(--ink-3);
+}
+
+.foot__in {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+}
+
+.foot__notes { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; }
+
+.foot__links { display: flex; gap: 1.25rem; }
+
+.foot__links a {
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-decoration-color: var(--hair);
+  text-underline-offset: 3px;
+}
+
+.foot__links a:hover { color: var(--ink); text-decoration-color: currentColor; }

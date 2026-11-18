@@ -1,0 +1,51 @@
+/* 404 only. Concatenated after base.css by the build.
+   A system alert on an empty desk: the app icon, a bold title, a line of
+   explanation and one default button. */
+
+.is-bare main {
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  padding: var(--gutter);
+}
+
+.error-page { width: min(100%, 20rem); }
+
+.error-page[hidden] { display: none; }
+
+.alert {
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  padding: 1.75rem 1.25rem 1.25rem;
+  border-radius: 28px;
+  background: var(--win);
+  box-shadow: var(--elev-hi);
+  text-align: center;
+}
+
+@supports (corner-shape: squircle) {
+  .alert { border-radius: 40px; corner-shape: squircle; }
+}
+
+.app-icon {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  margin-block-end: 0.4rem;
+  border-radius: 16px;
+  background: linear-gradient(#2c2c2f, #1c1c1e);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 4px 12px -4px rgba(0, 0, 0, 0.35);
+  color: #f2eee3;
+}
+
+.app-icon svg { width: 2.25rem; height: 2.25rem; }
+
+.alert__code { font-size: var(--t-xs); font-weight: 600; color: var(--ink-3); }
+
+.alert h1 { font-size: 1.0625rem; letter-spacing: -0.01em; }
+
+.alert p:not(.alert__code) { font-size: var(--t-sm); color: var(--ink-2); }
+
+.alert .btn { margin-block-start: 0.85rem; }
